@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IPAS AI 初中級備考知識地圖 | 擬人化成長階梯 & AI 動態出題</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          },
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- React & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: 'Noto Sans TC', Inter, sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+    }
+    .glow-blue {
+      box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
+    }
+    .glow-emerald {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+    }
+    .glow-purple {
+      box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.35);
+    }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spin-slow 8s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#0b0f19] text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+  <div id="root"></div>
+
+  <!-- 原生 SVG 圖標組件 -->
+  <script type="text/babel">
+    const Icon = ({ name, className = "w-5 h-5" }) => {
+      switch (name) {
+        case 'Baby':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'GraduationCap':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5" /></svg>;
+        case 'Briefcase':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>;
+        case 'CheckCircle':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'XCircle':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'BookOpen':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>;
+        case 'Brain':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>;
+        case 'Sparkles':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>;
+        case 'RotateCcw':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>;
+        case 'Download':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>;
+        case 'Upload':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>;
+        case 'Search':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>;
+        case 'Trophy':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>;
+        case 'AlertCircle':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'Key':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>;
+        case 'Dice':
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>;
+        case 'Loading':
+          return <svg className={`${className} animate-spin`} fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>;
+        default:
+          return <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+      }
+    };
+  </script>
+
+  <!-- 載入外部結構化資料模組 (若可載入) 或使用內建擴充資料庫 -->
+  <script type="module">
+    import { STAGES_DATA } from './src/data/stagesData.js';
+    window.__EXTENDED_STAGES_DATA__ = STAGES_DATA;
+  </script>
+
+  <!-- 主應用邏輯 -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    const STORAGE_KEY_MASTERED = 'ipas_ai_mastered_nodes';
+    const STORAGE_KEY_WRONG = 'ipas_ai_wrong_questions';
+    const STORAGE_KEY_CUSTOM_DATA = 'ipas_ai_custom_stages';
+    const STORAGE_KEY_API_KEY = 'ipas_ai_gemini_api_key';
+
+    function App() {
+      // 讀取擴充題庫
+      const [stagesData, setStagesData] = useState(() => {
+        try {
+          const cached = localStorage.getItem(STORAGE_KEY_CUSTOM_DATA);
+          if (cached) return JSON.parse(cached);
+          if (window.__EXTENDED_STAGES_DATA__) return window.__EXTENDED_STAGES_DATA__;
+        } catch (e) {}
+        return [];
+      });
+
+      // 若 window.__EXTENDED_STAGES_DATA__ 在模組非同步加載後就緒，自動注入
+      useEffect(() => {
+        if (stagesData.length === 0 && window.__EXTENDED_STAGES_DATA__) {
+          setStagesData(window.__EXTENDED_STAGES_DATA__);
+        }
+      }, [stagesData]);
+
+      // 已掌握節點
+      const [masteredNodes, setMasteredNodes] = useState(() => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY_MASTERED);
+          return saved ? new Set(JSON.parse(saved)) : new Set();
+        } catch (e) {
+          return new Set();
+        }
+      });
+
+      // 錯題本
+      const [wrongQuestions, setWrongQuestions] = useState(() => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY_WRONG);
+          return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+          return [];
+        }
+      });
+
+      // Gemini API Key
+      const [geminiApiKey, setGeminiApiKey] = useState(() => {
+        return localStorage.getItem(STORAGE_KEY_API_KEY) || '';
+      });
+
+      // 篩選與搜尋
+      const [selectedStageTab, setSelectedStageTab] = useState('all');
+      const [searchQuery, setSearchQuery] = useState('');
+
+      // 彈窗狀態
+      const [activeKnowledgeNode, setActiveKnowledgeNode] = useState(null);
+      const [activeQuizNode, setActiveQuizNode] = useState(null);
+      const [quizMode, setQuizMode] = useState('all'); // 'all', 'random3', 'ai'
+      const [showWrongModal, setShowWrongModal] = useState(false);
+      const [showBackupModal, setShowBackupModal] = useState(false);
+      const [showApiModal, setShowApiModal] = useState(false);
+      const [activeAiGeneratorNode, setActiveAiGeneratorNode] = useState(null);
+
+      // 保存進度
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY_MASTERED, JSON.stringify(Array.from(masteredNodes)));
+        } catch (e) {}
+      }, [masteredNodes]);
+
+      // 保存錯題本
+      useEffect(() => {
+        try {
+          localStorage.setItem(STORAGE_KEY_WRONG, JSON.stringify(wrongQuestions));
+        } catch (e) {}
+      }, [wrongQuestions]);
+
+      // 保存題庫（當有 AI 新生成並存入時）
+      const saveCustomStagesData = (newData) => {
+        setStagesData(newData);
+        try {
+          localStorage.setItem(STORAGE_KEY_CUSTOM_DATA, JSON.stringify(newData));
+        } catch (e) {}
+      };
+
+      // 統計數據
+      const totalNodes = useMemo(() => {
+        return stagesData.reduce((acc, stage) => acc + stage.nodes.length, 0);
+      }, [stagesData]);
+
+      const totalQuestionsCount = useMemo(() => {
+        return stagesData.reduce((acc, stage) => {
+          return acc + stage.nodes.reduce((nAcc, node) => nAcc + (node.questions ? node.questions.length : 0), 0);
+        }, 0);
+      }, [stagesData]);
+
+      const masteredCount = masteredNodes.size;
+      const progressPercent = totalNodes > 0 ? Math.round((masteredCount / totalNodes) * 100) : 0;
+
+      const handleNodeMastered = (nodeId) => {
+        setMasteredNodes(prev => {
+          const next = new Set(prev);
+          next.add(nodeId);
+          return next;
+        });
+      };
+
+      const handleRecordWrongQuestion = (question, node) => {
+        setWrongQuestions(prev => {
+          if (prev.some(q => q.id === question.id)) return prev;
+          return [...prev, { ...question, nodeTitle: node.title, nodeCode: node.code, stageId: node.stageId }];
+        });
+      };
+
+      const handleRemoveWrongQuestion = (questionId) => {
+        setWrongQuestions(prev => prev.filter(q => q.id !== questionId));
+      };
+
+      // 加入新題目到特定節點
+      const handleAppendQuestionsToNode = (nodeId, newQuestions) => {
+        const updated = stagesData.map(stage => {
+          return {
+            ...stage,
+            nodes: stage.nodes.map(node => {
+              if (node.id === nodeId) {
+                return {
+                  ...node,
+                  questions: [...(node.questions || []), ...newQuestions]
+                };
+              }
+              return node;
+            })
+          };
+        });
+        saveCustomStagesData(updated);
+        alert(`🎉 成功為【${nodeId}】新增 ${newQuestions.length} 題考題！`);
+      };
+
+      const handleResetProgress = () => {
+        if (window.confirm("確定要重設所有已掌握進度與錯題本嗎？（內建題庫不會丟失）")) {
+          setMasteredNodes(new Set());
+          setWrongQuestions([]);
+          localStorage.removeItem(STORAGE_KEY_MASTERED);
+          localStorage.removeItem(STORAGE_KEY_WRONG);
+        }
+      };
+
+      const handleExportBackup = () => {
+        const data = {
+          exportDate: new Date().toISOString(),
+          version: "2.0-ai-enhanced",
+          masteredNodes: Array.from(masteredNodes),
+          wrongQuestions,
+          stagesData
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ipas_ai_growth_map_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      const handleImportBackup = (importedJson) => {
+        try {
+          if (importedJson.stagesData) {
+            saveCustomStagesData(importedJson.stagesData);
+          }
+          if (importedJson.masteredNodes) {
+            setMasteredNodes(new Set(importedJson.masteredNodes));
+          }
+          if (importedJson.wrongQuestions) {
+            setWrongQuestions(importedJson.wrongQuestions);
+          }
+          alert("🎉 匯入成功！題庫與進度已同步更新。");
+          setShowBackupModal(false);
+        } catch (err) {
+          alert("❌ 檔案格式有誤，匯入失敗：" + err.message);
+        }
+      };
+
+      // 篩選節點
+      const filteredStages = useMemo(() => {
+        return stagesData.map(stage => {
+          if (selectedStageTab !== 'all' && stage.id !== selectedStageTab) {
+            return null;
+          }
+          const filteredNodes = stage.nodes.filter(node => {
+            if (!searchQuery.trim()) return true;
+            const query = searchQuery.toLowerCase();
+            return (
+              node.title.toLowerCase().includes(query) ||
+              node.mnemonic.toLowerCase().includes(query) ||
+              node.tags.some(tag => tag.toLowerCase().includes(query)) ||
+              node.hardcoreFacts.some(f => f.toLowerCase().includes(query)) ||
+              node.code.includes(query)
+            );
+          });
+          return { ...stage, nodes: filteredNodes };
+        }).filter(Boolean);
+      }, [stagesData, selectedStageTab, searchQuery]);
+
+      return (
+        <div className="min-h-screen flex flex-col">
+          {/* Header */}
+          <header className="sticky top-0 z-30 bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-emerald-500 to-purple-500 p-[2px] shadow-lg">
+                  <div className="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center">
+                    <Icon name="Brain" className="w-6 h-6 text-emerald-400" />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-amber-200 via-emerald-300 to-purple-300 bg-clip-text text-transparent">
+                      IPAS AI 初中級備考知識地圖
+                    </h1>
+                    <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/30">
+                      <Icon name="Sparkles" className="w-3 h-3 text-purple-400" />
+                      <span>AI 出題增強版</span>
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 hidden sm:block">
+                    收錄 {totalQuestionsCount} 題官方考綱題庫 • 支援 Gemini 無限智慧動態抽題
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress */}
+              <div className="hidden lg:flex flex-col items-end w-60">
+                <div className="flex justify-between w-full text-xs font-medium mb-1.5 text-slate-300">
+                  <span>技能掌握進度</span>
+                  <span className="text-emerald-400 font-bold">{progressPercent}% ({masteredCount}/{totalNodes})</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-400 via-blue-500 to-emerald-400 rounded-full transition-all duration-700"
+                    style={{ width: `${progressPercent}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowApiModal(true)}
+                  className={`px-3 py-2 rounded-xl border text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all ${
+                    geminiApiKey
+                      ? 'bg-purple-950/60 border-purple-600/60 text-purple-300 hover:bg-purple-900/60'
+                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
+                  }`}
+                  title="設定 Gemini API Key 以啟用 AI 即時無限出題"
+                >
+                  <Icon name="Key" className={`w-4 h-4 ${geminiApiKey ? 'text-purple-400' : 'text-slate-400'}`} />
+                  <span className="hidden sm:inline">{geminiApiKey ? 'AI 引擎已連線' : '設定 AI Key'}</span>
+                </button>
+
+                <button
+                  onClick={() => setShowWrongModal(true)}
+                  className="relative px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all"
+                  title="查看考前錯題本"
+                >
+                  <Icon name="AlertCircle" className="w-4 h-4 text-red-400" />
+                  <span>錯題本</span>
+                  {wrongQuestions.length > 0 && (
+                    <span className="px-1.5 py-0.2 bg-red-500 text-white text-[11px] font-bold rounded-full animate-pulse">
+                      {wrongQuestions.length}
+                    </span>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setShowBackupModal(true)}
+                  className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all"
+                  title="題庫與進度備份"
+                >
+                  <Icon name="Download" className="w-4 h-4 text-slate-400" />
+                  <span className="hidden sm:inline">備份/匯入</span>
+                </button>
+
+                <button
+                  onClick={handleResetProgress}
+                  className="p-2 rounded-xl bg-slate-800 hover:bg-red-500/20 border border-slate-700 hover:border-red-500/40 text-slate-400 hover:text-red-400 transition-all"
+                  title="重設答題進度"
+                >
+                  <Icon name="RotateCcw" className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </header>
+
+          {/* Banner */}
+          <section className="bg-gradient-to-b from-[#0f172a] to-[#0b0f19] border-b border-slate-800/60 py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+                    <span>AI 成長階梯心智圖</span>
+                    <span className="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-normal">
+                      目前收錄 {totalQuestionsCount} 題考題
+                    </span>
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
+                    三大階梯 13 個節點對應 IPAS 官方大綱。現在每個節點不僅可刷內建考題，更支援
+                    <span className="text-purple-400 font-bold">「✨ AI 即時隨機出題」</span>
+                    與
+                    <span className="text-emerald-400 font-bold">「🎲 隨機抽測」</span>
+                    模式！
+                  </p>
+                </div>
+
+                {/* 搜尋框 */}
+                <div className="relative w-full md:w-80">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                    <Icon name="Search" className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="搜尋考點、公式、演算法或術語..."
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
+                    >
+                      <Icon name="XCircle" className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Tabs */}
+              <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-slate-800/80 pt-4">
+                <span className="text-xs font-medium text-slate-400 mr-2">快速導航：</span>
+                <button
+                  onClick={() => setSelectedStageTab('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    selectedStageTab === 'all'
+                      ? 'bg-slate-200 text-slate-950 font-bold shadow-md'
+                      : 'bg-slate-800/60 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  全部階梯 ({totalNodes})
+                </button>
+                {stagesData.map((stage) => (
+                  <button
+                    key={stage.id}
+                    onClick={() => setSelectedStageTab(stage.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${
+                      selectedStageTab === stage.id
+                        ? 'bg-slate-700 text-white border border-slate-600 font-bold shadow-md'
+                        : 'bg-slate-800/60 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <Icon name={stage.icon} className="w-3.5 h-3.5" />
+                    <span>{stage.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Main Nodes Canvas */}
+          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+            {filteredStages.map((stage, stageIndex) => (
+              <div key={stage.id} className="relative">
+                {/* Stage Header */}
+                <div className="relative mb-8 p-6 rounded-3xl bg-gradient-to-r from-slate-900/90 via-slate-900/50 to-slate-900/90 border border-slate-800 backdrop-blur-sm overflow-hidden">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-start sm:items-center gap-4">
+                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stage.themeColor} p-0.5 shadow-lg`}>
+                        <div className="w-full h-full bg-[#0b0f19] rounded-[14px] flex items-center justify-center">
+                          <Icon name={stage.icon} className="w-7 h-7 text-white" />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300">
+                            階梯 0{stageIndex + 1}
+                          </span>
+                          <h3 className="text-xl sm:text-2xl font-black text-white">
+                            {stage.name}
+                          </h3>
+                          <span className={`text-xs px-2.5 py-0.5 rounded-full border font-medium ${stage.badgeBg}`}>
+                            年齡隱喻：{stage.age}
+                          </span>
+                        </div>
+                        <p className="text-sm text-slate-400 mt-1 font-medium">
+                          {stage.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 bg-slate-950/60 px-4 py-2.5 rounded-2xl border border-slate-800">
+                      <div className="text-right">
+                        <div className="text-[11px] text-slate-400 font-medium">階梯掌握度</div>
+                        <div className="text-sm font-bold text-slate-200">
+                          {stage.nodes.filter(n => masteredNodes.has(n.id)).length} / {stage.nodes.length} 節點
+                        </div>
+                      </div>
+                      <div className="w-10 h-10 rounded-full border-2 border-slate-700 flex items-center justify-center font-bold text-xs text-emerald-400">
+                        {Math.round((stage.nodes.filter(n => masteredNodes.has(n.id)).length / (stage.nodes.length || 1)) * 100)}%
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-xs sm:text-sm text-slate-400/90 italic border-l-2 border-slate-700 pl-3">
+                    💡 {stage.description}
+                  </p>
+                </div>
+
+                {/* Nodes Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5 relative">
+                  {stage.nodes.map((node) => {
+                    const isMastered = masteredNodes.has(node.id);
+                    const qCount = node.questions ? node.questions.length : 0;
+                    return (
+                      <div
+                        key={node.id}
+                        className={`group relative rounded-2xl p-5 bg-[#0e1626]/80 hover:bg-[#121c30] border transition-all duration-300 flex flex-col justify-between ${
+                          isMastered 
+                            ? 'border-emerald-500/50 glow-emerald bg-[#0d1a29]' 
+                            : 'border-slate-800/80 hover:border-slate-700 shadow-md'
+                        }`}
+                      >
+                        <div>
+                          {/* Top Meta */}
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-black px-2 py-0.5 rounded-lg bg-slate-800 text-slate-200 border border-slate-700">
+                                {node.code}
+                              </span>
+                              <span className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800/80 text-slate-300 font-medium">
+                                {node.targetExam}
+                              </span>
+                              <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-400">
+                                {qCount} 題內建
+                              </span>
+                            </div>
+
+                            {isMastered ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                                <Icon name="CheckCircle" className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>已掌握</span>
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-medium text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded-full border border-slate-700/50">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                <span>學習中</span>
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+                            {node.title}
+                          </h4>
+
+                          <div className="mt-3 p-3 rounded-xl bg-slate-900/70 border border-slate-800/80 text-xs text-amber-200/90 leading-relaxed font-sans">
+                            <span className="font-bold text-amber-400 mr-1.5">💬 成長口訣：</span>
+                            {node.mnemonic}
+                          </div>
+
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {node.tags.map(tag => (
+                              <span key={tag} className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800/60 text-slate-400 font-medium">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="mt-5 pt-3.5 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+                          <button
+                            onClick={() => setActiveKnowledgeNode(node)}
+                            className="flex-1 py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 transition-all border border-slate-700/60"
+                          >
+                            <Icon name="BookOpen" className="w-3.5 h-3.5 text-blue-400" />
+                            <span>知識精解</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setActiveQuizNode(node);
+                              setQuizMode('random3');
+                            }}
+                            className="py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 transition-all border border-slate-700/60"
+                            title="從本節點隨機抽取 3 題實戰"
+                          >
+                            <Icon name="Dice" className="w-3.5 h-3.5 text-amber-400" />
+                            <span>隨機3題</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setActiveQuizNode(node);
+                              setQuizMode('all');
+                            }}
+                            className={`flex-1 py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all shadow-md ${
+                              isMastered 
+                                ? 'bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60'
+                                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white'
+                            }`}
+                          >
+                            <Icon name="Trophy" className="w-3.5 h-3.5 text-white" />
+                            <span>全題測驗 ({qCount})</span>
+                          </button>
+
+                          {/* ✨ AI 動態出題按鈕 */}
+                          <button
+                            onClick={() => setActiveAiGeneratorNode(node)}
+                            className="py-2 px-2.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 text-purple-300 hover:text-white border border-purple-700/60 text-xs font-bold flex items-center justify-center gap-1 transition-all"
+                            title="呼叫 Gemini AI 為本節點動態生成新考題"
+                          >
+                            <Icon name="Sparkles" className="w-3.5 h-3.5 text-purple-400" />
+                            <span>AI出題</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </main>
+
+          {/* 雙層知識卡彈窗 */}
+          {activeKnowledgeNode && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
+              <div 
+                className="relative w-full max-w-3xl max-h-[90vh] bg-[#0e1626] border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                      {activeKnowledgeNode.code}
+                    </span>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-bold text-white">
+                        {activeKnowledgeNode.title}
+                      </h3>
+                      <div className="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span>對照考綱：{activeKnowledgeNode.targetExam}</span>
+                        <span>•</span>
+                        <span className="text-amber-400">難度：{activeKnowledgeNode.difficulty}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveKnowledgeNode(null)}
+                    className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                  >
+                    <Icon name="XCircle" className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                  {/* 第一層口訣 */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30">
+                    <div className="flex items-center gap-2 text-amber-400 font-bold text-sm mb-2">
+                      <Icon name="Baby" className="w-5 h-5 text-amber-400" />
+                      <span>第一層：生活擬人化口訣（秒懂心智模型）</span>
+                    </div>
+                    <blockquote className="text-sm sm:text-base text-amber-100/90 font-medium leading-relaxed italic border-l-4 border-amber-400 pl-4 py-1">
+                      "{activeKnowledgeNode.mnemonic}"
+                    </blockquote>
+                  </div>
+
+                  {/* 第二層考點 */}
+                  <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm mb-3">
+                      <Icon name="GraduationCap" className="w-5 h-5 text-emerald-400" />
+                      <span>第二層：IPAS 官方硬核考點條列與核心術語</span>
+                    </div>
+                    <ul className="space-y-3">
+                      {activeKnowledgeNode.hardcoreFacts.map((fact, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0"></span>
+                          <span className="flex-1">{fact}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs text-slate-400 font-medium">關鍵考點詞彙：</span>
+                    {activeKnowledgeNode.tags.map(tag => (
+                      <span key={tag} className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900/80 flex items-center justify-between gap-3">
+                  <div className="text-xs text-slate-400 hidden sm:block">
+                    本節點包含 {activeKnowledgeNode.questions.length} 題精選考題
+                  </div>
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <button
+                      onClick={() => setActiveKnowledgeNode(null)}
+                      className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
+                    >
+                      關閉
+                    </button>
+                    <button
+                      onClick={() => {
+                        const targetNode = activeKnowledgeNode;
+                        setActiveKnowledgeNode(null);
+                        setActiveQuizNode(targetNode);
+                        setQuizMode('random3');
+                      }}
+                      className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50"
+                    >
+                      <Icon name="Dice" className="w-4 h-4 text-white" />
+                      <span>隨機抽 3 題測驗 ➔</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 測驗器彈窗 */}
+          {activeQuizNode && (
+            <QuizModal
+              node={activeQuizNode}
+              mode={quizMode}
+              onClose={() => setActiveQuizNode(null)}
+              onMastered={handleNodeMastered}
+              onRecordWrong={handleRecordWrongQuestion}
+            />
+          )}
+
+          {/* ✨ AI 動態出題器彈窗 */}
+          {activeAiGeneratorNode && (
+            <AiGeneratorModal
+              node={activeAiGeneratorNode}
+              apiKey={geminiApiKey}
+              onClose={() => setActiveAiGeneratorNode(null)}
+              onRequireApiKey={() => setShowApiModal(true)}
+              onSaveToNodeBank={(newQuestions) => {
+                handleAppendQuestionsToNode(activeAiGeneratorNode.id, newQuestions);
+              }}
+              onDirectTest={(customNode) => {
+                setActiveAiGeneratorNode(null);
+                setActiveQuizNode(customNode);
+                setQuizMode('all');
+              }}
+            />
+          )}
+
+          {/* 🔑 API Key 設定彈窗 */}
+          {showApiModal && (
+            <ApiKeyModal
+              apiKey={geminiApiKey}
+              onClose={() => setShowApiModal(false)}
+              onSave={(newKey) => {
+                setGeminiApiKey(newKey);
+                localStorage.setItem(STORAGE_KEY_API_KEY, newKey);
+                setShowApiModal(false);
+              }}
+            />
+          )}
+
+          {/* 錯題複習專區 */}
+          {showWrongModal && (
+            <WrongQuestionsModal
+              questions={wrongQuestions}
+              onClose={() => setShowWrongModal(false)}
+              onRemove={handleRemoveWrongQuestion}
+            />
+          )}
+
+          {/* 備份彈窗 */}
+          {showBackupModal && (
+            <DataBackupModal
+              onClose={() => setShowBackupModal(false)}
+              onExport={handleExportBackup}
+              onImport={handleImportBackup}
+            />
+          )}
+
+          {/* Footer */}
+          <footer className="mt-auto border-t border-slate-800/80 bg-slate-950 py-8 px-4 text-center text-xs text-slate-500">
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <span className="font-semibold text-slate-400">IPAS AI 應用規劃師與工程師初中級備考系統</span> • 擬人化成長階梯 & AI 動態出題雙軌版
+              </div>
+              <div className="flex items-center gap-4 text-slate-400">
+                <span>純靜態架構・無伺服器開銷</span>
+                <span>•</span>
+                <span>支援離線 LocalStorage</span>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // --- ✨ AI 動態出題器組件 ---
+    function AiGeneratorModal({ node, apiKey, onClose, onRequireApiKey, onSaveToNodeBank, onDirectTest }) {
+      const [questionCount, setQuestionCount] = useState(3);
+      const [questionStyle, setQuestionStyle] = useState('mixed'); // 'mixed', 'scenario', 'concept', 'calc'
+      const [isLoading, setIsLoading] = useState(false);
+      const [generatedQuestions, setGeneratedQuestions] = useState(null);
+      const [errorMessage, setErrorMessage] = useState('');
+
+      const handleGenerate = async () => {
+        if (!apiKey) {
+          onRequireApiKey();
+          return;
+        }
+
+        setIsLoading(true);
+        setErrorMessage('');
+        setGeneratedQuestions(null);
+
+        try {
+          const stylePrompt = {
+            mixed: "綜合型考題（涵蓋情境應用、觀念判別與指標/公式題）",
+            scenario: "實務情境案例題（以企業導入、醫療篩檢、金融風控等情境包裝）",
+            concept: "核心觀念辨析題（著重演算法原理、優缺點對比與易混淆概念）",
+            calc: "指標運算與矩陣題（包含混淆矩陣、尺寸計算、參數估算等數值邏輯題）"
+          }[questionStyle];
+
+          const systemPrompt = `你是台灣經濟部 iPAS「AI 應用規劃師」初級與「人工智慧應用工程師」中級檢定考試的資深命題委員。
+請針對考點節點【${node.code} ${node.title}】（對照考科：${node.targetExam}，難度：${node.difficulty}）命製 ${questionCount} 題符合 iPAS 官方考試風格的單選題。
+題目風格側重：${stylePrompt}。
+
+考點背景與官方核心概念：
+${node.hardcoreFacts.join('\n')}
+擬人化心智口訣參考：
+${node.mnemonic}
+
+命題準則：
+1. 題目必須為繁體中文，格式嚴謹專業，契合 iPAS 官方題庫調性。
+2. 每個題目必須恰好有 4 個選項（A, B, C, D），誘答選項必須具備高度鑑別度，不可過於明顯荒謬。
+3. answer 為正確答案索引（0 代表 A, 1 代表 B, 2 代表 C, 3 代表 D）。
+4. explanation 為【IPAS 考點詳解】，精確剖析為何該選項正確，並指明其餘選項之盲點或錯誤。
+5. 嚴格輸出合法的 JSON Array 格式，不要包含任何開頭結尾的反引號或額外文字。
+
+JSON 格式架構：
+[
+  {
+    "question": "題目描述...",
+    "options": ["選項A", "選項B", "選項C", "選項D"],
+    "answer": 0,
+    "explanation": "【IPAS 考點詳解】：詳細分析說明..."
+  }
+]`;
+
+          // 呼叫 Gemini 2.5 Flash / 2.0 Flash
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: systemPrompt }] }],
+                generationConfig: {
+                  response_mime_type: "application/json",
+                  temperature: 0.75
+                }
+              })
+            }
+          );
+
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `API 請求失敗 (狀態碼 ${response.status})`);
+          }
+
+          const resData = await response.json();
+          const rawText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
+          const parsed = JSON.parse(rawText);
+
+          const formatted = parsed.map((q, idx) => ({
+            ...q,
+            id: `ai-${node.id}-${Date.now()}-${idx}`,
+            isAiGenerated: true
+          }));
+
+          setGeneratedQuestions(formatted);
+        } catch (err) {
+          setErrorMessage(err.message || "出題失敗，請檢查 API Key 或網路連線。");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md">
+          <div 
+            className="relative w-full max-w-2xl bg-[#0e1626] border border-purple-500/40 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-gradient-to-r from-purple-950/40 via-slate-900 to-slate-900">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
+                  <Icon name="Sparkles" className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>AI 智慧隨機出題器</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-mono">
+                      {node.code}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400">依據《{node.title}》考綱與心智模型即時生成</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-1.5 rounded-xl text-slate-400 hover:text-white">
+                <Icon name="XCircle" className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5">
+              {!apiKey && (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-3">
+                  <Icon name="AlertCircle" className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold">尚未設定 Gemini API Key：</span>
+                    <p className="mt-1 text-slate-300">
+                      點擊下方按鈕即可免費設定您的 Google Gemini API Key，享有每分鐘數十次免費快速動態出題額度。
+                    </p>
+                    <button
+                      onClick={onRequireApiKey}
+                      className="mt-2.5 px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs"
+                    >
+                      前往設定 API Key ➔
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 出題參數控制 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                  <label className="block text-xs font-bold text-slate-300 mb-2">生成題目數量：</label>
+                  <div className="flex items-center gap-2">
+                    {[1, 3, 5].map(num => (
+                      <button
+                        key={num}
+                        onClick={() => setQuestionCount(num)}
+                        className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                          questionCount === num 
+                            ? 'bg-purple-600 text-white shadow' 
+                            : 'bg-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {num} 題
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800">
+                  <label className="block text-xs font-bold text-slate-300 mb-2">出題風格側重：</label>
+                  <select
+                    value={questionStyle}
+                    onChange={(e) => setQuestionStyle(e.target.value)}
+                    className="w-full p-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="mixed">🎯 綜合多元題型 (推薦)</option>
+                    <option value="scenario">💼 企業實務情境案例題</option>
+                    <option value="concept">🧠 核心演算法與觀念辨析題</option>
+                    <option value="calc">📊 混淆矩陣與指標計算題</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* 錯誤訊息 */}
+              {errorMessage && (
+                <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
+                  <Icon name="XCircle" className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              {/* 生成後的成果預覽 */}
+              {generatedQuestions && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                      <Icon name="CheckCircle" className="w-4 h-4 text-purple-400" />
+                      <span>成功生成 {generatedQuestions.length} 題全新考題：</span>
+                    </span>
+                    <button
+                      onClick={() => onSaveToNodeBank(generatedQuestions)}
+                      className="text-xs px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1 shadow"
+                    >
+                      <Icon name="Download" className="w-3.5 h-3.5" />
+                      <span>永久加入本節點題庫</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {generatedQuestions.map((q, qIndex) => (
+                      <div key={qIndex} className="p-4 rounded-2xl bg-slate-900 border border-purple-500/30 text-xs space-y-2">
+                        <div className="font-bold text-white leading-relaxed">
+                          {qIndex + 1}. {q.question}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
+                          {q.options.map((opt, optIndex) => (
+                            <div 
+                              key={optIndex}
+                              className={`p-2 rounded-lg border text-[11px] ${
+                                optIndex === q.answer 
+                                  ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-bold' 
+                                  : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                              }`}
+                            >
+                              {String.fromCharCode(65 + optIndex)}. {opt}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="p-2.5 rounded-lg bg-slate-950 text-[11px] text-slate-400 leading-relaxed font-sans">
+                          <strong className="text-purple-400">詳解：</strong>{q.explanation}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-slate-800 bg-slate-900/80 flex items-center justify-between">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
+              >
+                關閉
+              </button>
+
+              <div className="flex items-center gap-2">
+                {generatedQuestions ? (
+                  <button
+                    onClick={() => {
+                      onDirectTest({
+                        ...node,
+                        questions: generatedQuestions
+                      });
+                    }}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow"
+                  >
+                    馬上測驗這批題目 ➔
+                  </button>
+                ) : (
+                  <button
+                    disabled={isLoading || !apiKey}
+                    onClick={handleGenerate}
+                    className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-xs font-bold text-white flex items-center gap-2 shadow"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Icon name="Loading" className="w-4 h-4 text-white" />
+                        <span>AI 命題推論中...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="Sparkles" className="w-4 h-4 text-white" />
+                        <span>呼叫 Gemini 即時出題</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 🔑 API Key 設定彈窗 ---
+    function ApiKeyModal({ apiKey, onClose, onSave }) {
+      const [inputKey, setInputKey] = useState(apiKey || '');
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md">
+          <div 
+            className="relative w-full max-w-md bg-[#0e1626] border border-slate-700 rounded-3xl shadow-2xl p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-purple-400 font-bold text-base">
+                <Icon name="Key" className="w-5 h-5" />
+                <span>Google Gemini API Key 設定</span>
+              </div>
+              <button onClick={onClose} className="text-slate-400 hover:text-white">
+                <Icon name="XCircle" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              設定您的 Gemini API Key 後，即可享受「無上限智慧動態出題」。金鑰僅安全儲存於您目前的瀏覽器 LocalStorage，絕不上傳第三方伺服器。
+            </p>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">
+                API Key：
+              </label>
+              <input
+                type="password"
+                value={inputKey}
+                onChange={(e) => setInputKey(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-xs text-slate-200 font-mono focus:outline-none focus:border-purple-500"
+              />
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-400">
+              💡 還沒有 API Key？
+              <a 
+                href="https://aistudio.google.com/app/apikey" 
+                target="_blank" 
+                rel="noreferrer"
+                className="text-purple-400 hover:underline font-bold ml-1"
+              >
+                前往 Google AI Studio 免費申請 (30 秒開通) ↗
+              </a>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
+              >
+                取消
+              </button>
+              <button
+                onClick={() => onSave(inputKey.trim())}
+                className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white"
+              >
+                儲存金鑰
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 測驗器子組件 ---
+    function QuizModal({ node, mode = 'all', onClose, onMastered, onRecordWrong }) {
+      const allQuestions = node.questions || [];
+
+      // 依模式選擇題目
+      const questions = useMemo(() => {
+        if (mode === 'random3') {
+          // 隨機抽 3 題
+          const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+          return shuffled.slice(0, Math.min(3, shuffled.length));
+        }
+        return allQuestions;
+      }, [allQuestions, mode]);
+
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [selectedOption, setSelectedOption] = useState(null);
+      const [isSubmitted, setIsSubmitted] = useState(false);
+      const [score, setScore] = useState(0);
+      const [isFinished, setIsFinished] = useState(false);
+
+      const currentQ = questions[currentIndex] || {};
+
+      const handleSelectOption = (index) => {
+        if (isSubmitted) return;
+        setSelectedOption(index);
+      };
+
+      const handleSubmitAnswer = () => {
+        if (selectedOption === null || isSubmitted) return;
+        const isCorrect = selectedOption === currentQ.answer;
+        setIsSubmitted(true);
+        if (isCorrect) {
+          setScore(s => s + 1);
+        } else {
+          onRecordWrong(currentQ, node);
+        }
+      };
+
+      const handleNextQuestion = () => {
+        if (currentIndex + 1 < questions.length) {
+          setCurrentIndex(i => i + 1);
+          setSelectedOption(null);
+          setIsSubmitted(false);
+        } else {
+          setIsFinished(true);
+          const finalScore = score + (selectedOption === currentQ.answer ? 0 : 0);
+          if (score === questions.length || (score + 1 === questions.length && selectedOption === currentQ.answer)) {
+            onMastered(node.id);
+          }
+        }
+      };
+
+      const handleRetry = () => {
+        setCurrentIndex(0);
+        setSelectedOption(null);
+        setIsSubmitted(false);
+        setScore(0);
+        setIsFinished(false);
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md">
+          <div 
+            className="relative w-full max-w-2xl bg-[#0e1626] border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[92vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="p-5 sm:p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/40">
+                  {node.code} {mode === 'random3' ? '🎲 隨機抽測' : '全真測驗'}
+                </span>
+                <h3 className="text-base sm:text-lg font-bold text-white truncate max-w-xs sm:max-w-md">
+                  {node.title}
+                </h3>
+              </div>
+              <button onClick={onClose} className="p-1.5 rounded-xl text-slate-400 hover:text-white">
+                <Icon name="XCircle" className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {!isFinished ? (
+                <div>
+                  <div className="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
+                    <span>第 {currentIndex + 1} 題 / 共 {questions.length} 題</span>
+                    <span className="text-emerald-400">目前答對：{score} 題</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden mb-6">
+                    <div 
+                      className="h-full bg-emerald-500 transition-all duration-300"
+                      style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
+                    ></div>
+                  </div>
+
+                  <div className="text-base sm:text-lg font-bold text-white leading-snug mb-5">
+                    {currentQ.question}
+                  </div>
+
+                  <div className="space-y-3">
+                    {currentQ.options && currentQ.options.map((opt, optIdx) => {
+                      let optionClasses = "border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-slate-200";
+                      
+                      if (selectedOption === optIdx) {
+                        optionClasses = "border-blue-500 bg-blue-500/10 text-blue-200 font-semibold";
+                      }
+
+                      if (isSubmitted) {
+                        if (optIdx === currentQ.answer) {
+                          optionClasses = "border-emerald-500 bg-emerald-500/20 text-emerald-200 font-bold";
+                        } else if (selectedOption === optIdx) {
+                          optionClasses = "border-red-500 bg-red-500/20 text-red-200 font-semibold";
+                        } else {
+                          optionClasses = "border-slate-800/40 bg-slate-900/20 text-slate-500 opacity-60";
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={optIdx}
+                          disabled={isSubmitted}
+                          onClick={() => handleSelectOption(optIdx)}
+                          className={`w-full p-4 rounded-2xl border text-left text-xs sm:text-sm transition-all flex items-start gap-3.5 ${optionClasses}`}
+                        >
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 ${
+                            isSubmitted && optIdx === currentQ.answer
+                              ? 'bg-emerald-500 text-white'
+                              : isSubmitted && selectedOption === optIdx
+                              ? 'bg-red-500 text-white'
+                              : selectedOption === optIdx
+                              ? 'bg-blue-500 text-white'
+                              : 'bg-slate-800 text-slate-400'
+                          }`}>
+                            {String.fromCharCode(65 + optIdx)}
+                          </span>
+                          <span className="flex-1 leading-relaxed">{opt}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {isSubmitted && (
+                    <div className={`mt-6 p-4 rounded-2xl border text-xs sm:text-sm ${
+                      selectedOption === currentQ.answer 
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-200' 
+                        : 'bg-red-500/10 border-red-500/30 text-red-200'
+                    }`}>
+                      <div className="font-bold flex items-center gap-1.5 mb-1.5">
+                        {selectedOption === currentQ.answer ? (
+                          <>
+                            <Icon name="CheckCircle" className="w-4 h-4 text-emerald-400" />
+                            <span className="text-emerald-400 font-bold">回答正確！</span>
+                          </>
+                        ) : (
+                          <>
+                            <Icon name="XCircle" className="w-4 h-4 text-red-400" />
+                            <span className="text-red-400 font-bold">回答錯誤（已收錄至錯題本）</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="text-slate-300 leading-relaxed font-sans mt-2 pt-2 border-t border-slate-700/50">
+                        <strong className="text-white">【官方考點詳解】：</strong>{currentQ.explanation}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="py-8 text-center space-y-6">
+                  <div className={`w-20 h-20 mx-auto rounded-3xl flex items-center justify-center shadow-xl ${
+                    score === questions.length 
+                      ? 'bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400' 
+                      : 'bg-amber-500/20 border-2 border-amber-500 text-amber-400'
+                  }`}>
+                    <Icon name={score === questions.length ? "Trophy" : "Brain"} className="w-10 h-10" />
+                  </div>
+
+                  <div>
+                    <h4 className="text-2xl font-black text-white">
+                      {score === questions.length ? '🎉 完美掌握！技能點亮' : '💪 完成測驗！持續精進'}
+                    </h4>
+                    <p className="text-sm text-slate-400 mt-2">
+                      您在《{node.title}》共答對了 <span className="text-emerald-400 font-bold text-lg">{score}</span> / {questions.length} 題
+                    </p>
+                    {score === questions.length ? (
+                      <p className="text-xs text-emerald-300 mt-1 font-medium bg-emerald-500/10 py-1.5 px-3 rounded-full inline-block border border-emerald-500/30">
+                        ✨ 恭喜！本節點已成功標記為「已掌握」！
+                      </p>
+                    ) : (
+                      <p className="text-xs text-amber-300 mt-1 font-medium bg-amber-500/10 py-1.5 px-3 rounded-full inline-block border border-amber-500/30">
+                        💡 答錯的題目已歸檔至「錯題本」，考前可專項衝刺。
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="p-4 sm:p-5 border-t border-slate-800 bg-slate-900/80 flex items-center justify-between">
+              {!isFinished ? (
+                <>
+                  <button onClick={onClose} className="px-4 py-2.5 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300">
+                    結束退出
+                  </button>
+                  {!isSubmitted ? (
+                    <button
+                      disabled={selectedOption === null}
+                      onClick={handleSubmitAnswer}
+                      className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-xs font-bold text-white shadow"
+                    >
+                      確認送出答案
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleNextQuestion}
+                      className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow"
+                    >
+                      {currentIndex + 1 < questions.length ? '下一題 ➔' : '查看成績結果'}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center justify-center gap-3 w-full">
+                  <button onClick={handleRetry} className="px-5 py-2.5 rounded-xl bg-slate-800 text-xs font-semibold text-slate-200 flex items-center gap-2">
+                    <Icon name="RotateCcw" className="w-4 h-4" />
+                    <span>重新挑戰</span>
+                  </button>
+                  <button onClick={onClose} className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow">
+                    返回成長樹
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 錯題筆記本組件 ---
+    function WrongQuestionsModal({ questions, onClose, onRemove }) {
+      const [filterStage, setFilterStage] = useState('all');
+
+      const filtered = questions.filter(q => {
+        if (filterStage === 'all') return true;
+        return q.stageId === filterStage;
+      });
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md">
+          <div 
+            className="relative w-full max-w-3xl bg-[#0e1626] border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+                  <Icon name="AlertCircle" className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>考前錯題筆記本</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 font-mono">
+                      {questions.length} 題
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400">深入複習盲點，徹底掌握高頻考點</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-1.5 rounded-xl text-slate-400 hover:text-white">
+                <Icon name="XCircle" className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="px-6 py-3 bg-slate-900/40 border-b border-slate-800 flex items-center gap-2">
+              <span className="text-xs text-slate-400 font-medium mr-2">篩選：</span>
+              <button
+                onClick={() => setFilterStage('all')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                  filterStage === 'all' ? 'bg-slate-200 text-slate-900 font-bold' : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                全部 ({questions.length})
+              </button>
+              <button
+                onClick={() => setFilterStage('stage-1')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                  filterStage === 'stage-1' ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                🌱 童年啟蒙
+              </button>
+              <button
+                onClick={() => setFilterStage('stage-2')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                  filterStage === 'stage-2' ? 'bg-blue-500 text-white font-bold' : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                🌿 青年專精
+              </button>
+              <button
+                onClick={() => setFilterStage('stage-3')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium ${
+                  filterStage === 'stage-3' ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                🌳 成人實戰
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-5">
+              {filtered.length === 0 ? (
+                <div className="py-16 text-center space-y-3">
+                  <Icon name="CheckCircle" className="w-12 h-12 text-emerald-400 mx-auto" />
+                  <h4 className="text-base font-bold text-slate-200">目前沒有錯題！太棒了！</h4>
+                  <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                    測驗中答錯的題目會自動歸檔於此，助您在考前精準衝刺弱點。
+                  </p>
+                </div>
+              ) : (
+                filtered.map((item, idx) => (
+                  <div key={item.id} className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-800 text-amber-300">
+                          {item.nodeCode}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          {item.nodeTitle}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => onRemove(item.id)}
+                        className="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1"
+                      >
+                        <Icon name="CheckCircle" className="w-3.5 h-3.5" />
+                        <span>已搞懂移除</span>
+                      </button>
+                    </div>
+
+                    <h5 className="text-sm font-bold text-white mb-3">
+                      {idx + 1}. {item.question}
+                    </h5>
+
+                    <div className="space-y-1.5 mb-3 text-xs">
+                      {item.options.map((opt, optIndex) => (
+                        <div 
+                          key={optIndex} 
+                          className={`p-2.5 rounded-xl border flex items-center gap-2 ${
+                            optIndex === item.answer 
+                              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold' 
+                              : 'bg-slate-950/60 border-slate-800 text-slate-400'
+                          }`}
+                        >
+                          <span className={`w-5 h-5 rounded-full flex items-center justify-center font-mono text-[10px] ${
+                            optIndex === item.answer ? 'bg-emerald-500 text-white font-bold' : 'bg-slate-800 text-slate-400'
+                          }`}>
+                            {String.fromCharCode(65 + optIndex)}
+                          </span>
+                          <span>{opt}</span>
+                          {optIndex === item.answer && (
+                            <span className="ml-auto text-[11px] text-emerald-400 font-bold">✓ 正確解答</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 font-sans">
+                      <strong className="text-amber-400">【官方詳解與破解口訣】：</strong>{item.explanation}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-4 border-t border-slate-800 bg-slate-900/80 text-right">
+              <button onClick={onClose} className="px-5 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-200">
+                關閉
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- 備份彈窗 ---
+    function DataBackupModal({ onClose, onExport, onImport }) {
+      const [importText, setImportText] = useState('');
+
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const parsed = JSON.parse(event.target.result);
+            onImport(parsed);
+          } catch (err) {
+            alert("讀取檔案失敗：請確認是否為合法的 JSON 格式。");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      const handleManualImport = () => {
+        if (!importText.trim()) return;
+        try {
+          const parsed = JSON.parse(importText);
+          onImport(parsed);
+        } catch (err) {
+          alert("JSON 格式剖析錯誤：" + err.message);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md">
+          <div 
+            className="relative w-full max-w-xl bg-[#0e1626] border border-slate-700/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+              <div className="flex items-center gap-2.5">
+                <Icon name="Download" className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-base sm:text-lg font-bold text-white">
+                  題庫與進度備份 / 匯入
+                </h3>
+              </div>
+              <button onClick={onClose} className="p-1 rounded-xl text-slate-400 hover:text-white">
+                <Icon name="XCircle" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 text-xs sm:text-sm text-slate-300">
+              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-bold text-white flex items-center gap-2">
+                  <Icon name="Download" className="w-4 h-4 text-emerald-400" />
+                  <span>一鍵匯出完整備考檔案 (JSON)</span>
+                </h4>
+                <p className="text-xs text-slate-400">
+                  將您目前的已掌握節點、錯題記錄與完整（包含 AI 生成）題庫打包下載至電腦。
+                </p>
+                <button
+                  onClick={onExport}
+                  className="mt-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-white text-xs flex items-center gap-2 shadow"
+                >
+                  <Icon name="Download" className="w-4 h-4" />
+                  <span>下載完整進度備份</span>
+                </button>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                <h4 className="font-bold text-white flex items-center gap-2">
+                  <Icon name="Upload" className="w-4 h-4 text-blue-400" />
+                  <span>匯入備份或自訂題庫</span>
+                </h4>
+                <div>
+                  <label className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 cursor-pointer">
+                    <Icon name="Upload" className="w-4 h-4 text-slate-400" />
+                    <span>選擇 JSON 檔案上傳</span>
+                    <input type="file" accept=".json" onChange={handleFileChange} className="hidden" />
+                  </label>
+                </div>
+
+                <div className="pt-2">
+                  <label className="block text-xs font-medium text-slate-400 mb-1">
+                    或直接貼上 JSON 文本：
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={importText}
+                    onChange={(e) => setImportText(e.target.value)}
+                    placeholder="在此貼上備份 JSON 內容..."
+                    className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-xl font-mono text-xs text-slate-300 focus:outline-none focus:border-blue-500"
+                  />
+                  {importText.trim() && (
+                    <button
+                      onClick={handleManualImport}
+                      className="mt-2 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white"
+                    >
+                      確認套用貼上的 JSON
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-800 bg-slate-900/80 text-right">
+              <button onClick={onClose} className="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-200">
+                關閉
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>
